@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="foro"
+        android:id="@+id/foro"
+        android:icon="@drawable/foro"/>
+
+    <item android:title="cuenta"
+        android:id="@+id/cuenta"
+        android:icon="@drawable/cuenta"/>
+
+    <item android:title="ajustes"
+        android:id="@+id/ajustes"
+        android:icon="@drawable/ajustes"/>
+</menu>

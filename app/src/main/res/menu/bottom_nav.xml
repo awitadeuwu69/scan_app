@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="foro"
+        android:id="@+id/foro"
+        android:icon="@drawable/foro"/>
+
+    <item android:title="cuenta"
+        android:id="@+id/cuenta"
+        android:icon="@drawable/cuenta"/>
+
+    <item android:title="ajustes"
+        android:id="@+id/ajustes"
+        android:icon="@drawable/ajustes"/>
+
+    <item android:title="inicio"
+        android:id="@+id/inicio"
+        android:icon="@drawable/inicio"/>
+
+    <item android:title="historial"
+        android:id="@+id/historial"
+        android:icon="@drawable/historial"/>
+    </menu>
