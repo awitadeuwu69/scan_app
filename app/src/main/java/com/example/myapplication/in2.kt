@@ -1,7 +1,6 @@
 package com.example.myapplication
 
 import android.Manifest
-import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -16,23 +15,26 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
-import com.google.android.material.button.MaterialButton
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import androidx.fragment.app.viewModels
+import com.example.myapplication.databinding.FragmentAloBinding
+import com.example.myapplication.ui.WeatherViewModel
 import java.io.File
 import java.io.IOException
 
 class in2 : Fragment() {
 
-    private lateinit var btnEscanear: MaterialButton
-    private lateinit var btnAyuda: FloatingActionButton
+
+    private var _binding: FragmentAloBinding? = null
+    private val binding get() = _binding!!
 
     private var photoUri: Uri? = null
     private var navigationListener: NavigationListener? = null
 
-
     private lateinit var takePictureLauncher: ActivityResultLauncher<Uri>
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
 
+
+    private val weatherViewModel: WeatherViewModel by viewModels()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -51,13 +53,10 @@ class in2 : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
         takePictureLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
             if (success && photoUri != null) {
                 try {
-
                     MediaStore.Images.Media.getBitmap(requireContext().contentResolver, photoUri)
-
                     navigationListener?.navigateToHistorial(photoUri.toString())
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -71,11 +70,9 @@ class in2 : Fragment() {
                     } catch (_: Exception) {}
                 }
             }
-
             photoUri = null
         }
 
-        // Launcher para permisos
         requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
                 openCamera()
@@ -88,21 +85,40 @@ class in2 : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_alo, container, false)
+    ): View {
 
-        btnEscanear = view.findViewById(R.id.btnEscanear)
-        btnAyuda = view.findViewById(R.id.btnAyuda)
+        _binding = FragmentAloBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        btnEscanear.setOnClickListener {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+
+        binding.btnEscanear.setOnClickListener {
             checkCameraPermissionAndOpen()
         }
 
-        btnAyuda.setOnClickListener {
+        binding.btnAyuda.setOnClickListener {
             Toast.makeText(requireContext(), "no quiero", Toast.LENGTH_LONG).show()
         }
 
-        return view
+
+        setupWeatherObservers()
+        weatherViewModel.fetchWeatherForCity("Santiago")
+    }
+    
+    private fun setupWeatherObservers() {
+        weatherViewModel.weatherData.observe(viewLifecycleOwner) { weatherResponse ->
+
+            binding.tvCityName.text = weatherResponse.location.name
+            binding.tvTemperature.text = "${weatherResponse.current.tempC}°C"
+            binding.tvWeatherDescription.text = weatherResponse.current.condition.text
+        }
+
+        weatherViewModel.errorMessage.observe(viewLifecycleOwner) { errorMsg ->
+            Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun checkCameraPermissionAndOpen() {
@@ -145,5 +161,11 @@ class in2 : Fragment() {
             Toast.makeText(requireContext(), "Error I/O: ${e.message}", Toast.LENGTH_LONG).show()
             null
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        _binding = null
     }
 }

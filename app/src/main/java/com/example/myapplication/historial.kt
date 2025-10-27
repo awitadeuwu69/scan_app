@@ -57,10 +57,7 @@ class Historial : Fragment() {
         outState.putString(STATE_IMAGE_URI, currentImageUri.toString())
     }
 
-    /**
-     * MÉTODO CLAVE: Llamado desde MainActivity (via NavigationListener) para cargar la nueva imagen
-     * y forzar el cambio de pestaña.
-     */
+
     fun loadImage(imageUriString: String) {
         val uri = Uri.parse(imageUriString)
         currentImageUri = uri
@@ -72,9 +69,7 @@ class Historial : Fragment() {
 
     }
 
-    /**
-     * Muestra la URI en el ImageView y garantiza los permisos.
-     */
+
     private fun displayImage(uri: Uri) {
         try {
 
